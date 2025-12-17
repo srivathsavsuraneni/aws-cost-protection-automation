@@ -84,7 +84,14 @@ The system reacts automatically to budget threshold breaches and analyzes cost t
 - Tag-based enforcement for production vs non-production resources  
 
 ---
+## Setup (High Level)
+1. Create an SNS topic (e.g., cost-protection-alerts)
+2. Subscribe the Lambda function to the SNS topic
+3. Configure AWS Budgets to send alerts to the SNS topic
+4. Set Lambda environment variables (DRY_RUN, tag keys/values)
+5. Tag resources intended for cleanup with CostCleanup=true
 
+---
 ## Author
 **Srivathsav Suraneni**  
 AWS Certified Machine Learning Engineer – Associate
