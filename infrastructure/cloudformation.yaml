@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: SNS -> Lambda wiring for AWS Cost-Protection Automation
+
+Parameters:
+  LambdaFunctionName:
+    Type: String
+    Default: cost-protection-automation
+  SnsTopicName:
+    Type: String
+    Default: cost-protection-alerts
+
+Resources:
+  CostAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Ref SnsTopicName
+
+  LambdaInvokePermissionFromSNS:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaFunctionName
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref CostAlertsTopic
+
+  SnsSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref CostAlertsTopic
+      Protocol: lambda
+      Endpoint: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunctionName}
+
+Outputs:
+  SnsTopicArn:
+    Value: !Ref CostAlertsTopic
